@@ -6,8 +6,8 @@
 > entrypoint interface and the logic needed to get your next project going with minimal boilerplate overhead.
 >
 > - You can see a basic demonstration implementation by visiting the demo
-    repository [here](https://github.com/Framework-Factory/demo).
-> - All documentation is provided in the [separate `docs` repository](https://github.com/Framework-Factory/docs).
+    repository [here](https://github.com/FrameworkFactoryPHP/demo).
+> - All documentation is provided in the [separate `docs` repository](https://github.com/FrameworkFactoryPHP/docs).
 
 ## Features
 - **Application entrypoint:** The application entrypoint is located at `FrameworkFactory\Application`, and assists in
@@ -21,7 +21,7 @@
         - Facade support
         - Lazy loading
 - **Fully tested codebase:** The codebase is fully tested using the [Pest PHP](https://pestphp.com/) testing framework.
-  You can see all tests by going [here](https://github.com/Framework-Factory/core/tree/main/tests).
+  You can see all tests by going [here](https://github.com/FrameworkFactoryPHP/core/tree/main/tests).
 
 #### License
 
