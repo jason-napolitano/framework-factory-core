@@ -2,8 +2,8 @@
 
 namespace FrameworkFactory\Application {
 
-    use FrameworkFactory\Exceptions;
     use FrameworkFactory\Contracts;
+    use FrameworkFactory\Support;
 
     /**
      * The Accessor class acts a facade system. It grants
@@ -14,8 +14,8 @@ namespace FrameworkFactory\Application {
         /** @var Contracts\Container\ContainerInstance $container the container instance */
         private static Contracts\Container\ContainerInstance $container;
 
-        /** @var string $key the key used to resolve the container binding */
-        protected static string $key;
+        /** @var string|null $key the key used to resolve the container binding */
+        protected static ?string $key = null;
 
         /**
          * Set the container which will be used for
@@ -33,20 +33,34 @@ namespace FrameworkFactory\Application {
         /**
          * Container bindings resolver
          *
-         * @return mixed
+         * @return string
          */
-        protected static function resolver(): mixed
+        protected static function resolver(): string
         {
-            if (!isset(static::$container)) {
-                throw new Exceptions\Container\ContainerException('Application container has not been set.');
+            if (static::$key) {
+                return static::$key;
             }
 
-            return static::$container->get(static::$key);
+            $reflection = new \ReflectionClass(static::class);
+            $attributes = $reflection->getAttributes(Support\Attributes\Accessors\ResolvesFor::class);
+
+            /** @var Support\Attributes\Accessors\ResolvesFor $attribute */
+            $attribute = $attributes[0]->newInstance();
+            return $attribute->accessor;
         }
 
         /**
-         * Forward the static calls to the bound
-         * instance
+         * Returns the container binding instance
+         *
+         * @return mixed
+         */
+        protected static function instance(): mixed
+        {
+            return static::$container->get(static::resolver());
+        }
+
+        /**
+         * Forward the static calls to the bound instance
          *
          * @param string $method
          * @param array  $arguments
@@ -55,15 +69,7 @@ namespace FrameworkFactory\Application {
          */
         public static function __callStatic(string $method, array $arguments)
         {
-            $instance = static::resolver();
-
-            if (!method_exists($instance, $method)) {
-                throw new \BadMethodCallException(
-                    sprintf('Method %s::%s does not exist.', get_class($instance), $method)
-                );
-            }
-
-            return $instance->$method(...$arguments);
+            return static::instance()->{$method}(...$arguments);
         }
     }
 }
