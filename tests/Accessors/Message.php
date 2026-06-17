@@ -2,14 +2,12 @@
 
 namespace Tests\Accessors {
 
-	use FrameworkFactory\Application\Accessor;
-	use FrameworkFactory\Support\Attributes;
-	use Tests\Services\MessageService;
+    use FrameworkFactory\Application\Accessor;
 
     /**
      * @method static display(string $message): string
      */
-    #[Attributes\Accessors\ResolvesFor('message')]
+    #[\FrameworkFactory\Support\Attributes\Accessors\ResolvesFor('message')]
     class Message extends Accessor
     {
         // ...

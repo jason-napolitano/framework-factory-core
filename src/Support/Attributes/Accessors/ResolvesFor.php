@@ -7,8 +7,12 @@ namespace FrameworkFactory\Support\Attributes\Accessors {
     #[Attribute(Attribute::TARGET_CLASS)]
     readonly class ResolvesFor
     {
-        public function __construct(public string $accessor)
+        /**
+         * @param string $id identifier of the entry to look for
+         */
+        public function __construct(public string $id)
         {
+            // ...
         }
     }
 }

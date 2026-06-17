@@ -2,8 +2,9 @@
 
 namespace FrameworkFactory\Application {
 
-    use FrameworkFactory\Contracts;
-    use FrameworkFactory\Support;
+    use FrameworkFactory\Support\Attributes\Accessors\ResolvesFor;
+    use FrameworkFactory\Contracts\Container\ContainerInstance;
+    use FrameworkFactory\Support\Cache\Attribute as Cache;
 
     /**
      * The Accessor class acts a facade system. It grants
@@ -11,21 +12,24 @@ namespace FrameworkFactory\Application {
      */
     abstract class Accessor
     {
-        /** @var Contracts\Container\ContainerInstance $container the container instance */
-        private static Contracts\Container\ContainerInstance $container;
+        /** @var ContainerInstance $container the container instance */
+        private static ContainerInstance $container;
 
         /** @var string|null $key the key used to resolve the container binding */
         protected static ?string $key = null;
+
+        /** @var array $attributeCache cached attributes */
+        protected static array $attributeCache = [];
 
         /**
          * Set the container which will be used for
          * binding resolution
          *
-         * @param Contracts\Container\ContainerInstance $container
+         * @param ContainerInstance $container
          *
          * @return void
          */
-        public static function setContainer(Contracts\Container\ContainerInstance $container): void
+        public static function setContainer(ContainerInstance $container): void
         {
             static::$container = $container;
         }
@@ -35,18 +39,17 @@ namespace FrameworkFactory\Application {
          *
          * @return string
          */
-        protected static function resolver(): string
+        private static function resolver(): string
         {
+            // if $key is assigned, let's use the value of $key
             if (static::$key) {
                 return static::$key;
             }
 
-            $reflection = new \ReflectionClass(static::class);
-            $attributes = $reflection->getAttributes(Support\Attributes\Accessors\ResolvesFor::class);
-
-            /** @var Support\Attributes\Accessors\ResolvesFor $attribute */
-            $attribute = $attributes[0]->newInstance();
-            return $attribute->accessor;
+            // otherwise, let's use the $id value of ResolvesFor()
+            /** @var ResolvesFor $attribute */
+            $attribute = Cache::get(static::class, ResolvesFor::class);
+            return $attribute->id;
         }
 
         /**
@@ -54,7 +57,7 @@ namespace FrameworkFactory\Application {
          *
          * @return mixed
          */
-        protected static function instance(): mixed
+        private static function instance(): mixed
         {
             return static::$container->get(static::resolver());
         }
