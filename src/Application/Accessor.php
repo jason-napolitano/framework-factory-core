@@ -2,9 +2,9 @@
 
 namespace FrameworkFactory\Application {
 
+    use FrameworkFactory\Support\Cache\Attribute as CachedAttribute;
     use FrameworkFactory\Support\Attributes\Accessors\ResolvesFor;
     use FrameworkFactory\Contracts\Container\ContainerInstance;
-    use FrameworkFactory\Support\Cache\Attribute as Cache;
 
     /**
      * The Accessor class acts a facade system. It grants
@@ -17,9 +17,6 @@ namespace FrameworkFactory\Application {
 
         /** @var string|null $key the key used to resolve the container binding */
         protected static ?string $key = null;
-
-        /** @var array $attributeCache cached attributes */
-        protected static array $attributeCache = [];
 
         /**
          * Set the container which will be used for
@@ -48,7 +45,7 @@ namespace FrameworkFactory\Application {
 
             // otherwise, let's use the $id value of ResolvesFor()
             /** @var ResolvesFor $attribute */
-            $attribute = Cache::get(static::class, ResolvesFor::class);
+            $attribute = CachedAttribute::get(static::class, ResolvesFor::class);
             return $attribute->id;
         }
 
@@ -70,7 +67,7 @@ namespace FrameworkFactory\Application {
          *
          * @return mixed
          */
-        public static function __callStatic(string $method, array $arguments)
+        public static function __callStatic(string $method, array $arguments): mixed
         {
             return static::instance()->{$method}(...$arguments);
         }
