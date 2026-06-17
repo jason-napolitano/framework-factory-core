@@ -1,8 +1,8 @@
 {
   "name": "framework-factory/core",
+  "description": "Framework Factory is a PHP application starter package. The aim is to make building PHP 8 powered applications a breeze.",
   "minimum-stability": "stable",
   "license": "BSD-3-Clause",
-  "version": "1.2.0",
   "require": {
     "psr/container": "^2.0.2",
     "php": "^8.5"
