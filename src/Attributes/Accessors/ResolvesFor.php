@@ -1,10 +1,10 @@
 <?php
 
-namespace FrameworkFactory\Support\Attributes\Accessors {
+namespace FrameworkFactory\Attributes\Accessors {
 
-    use Attribute;
+	use Attribute;
 
-    #[Attribute(Attribute::TARGET_CLASS)]
+	#[Attribute(Attribute::TARGET_CLASS)]
     readonly class ResolvesFor
     {
         /**

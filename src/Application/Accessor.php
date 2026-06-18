@@ -2,11 +2,11 @@
 
 namespace FrameworkFactory\Application {
 
-    use FrameworkFactory\Support\Cache\Attribute as CachedAttribute;
-    use FrameworkFactory\Support\Attributes\Accessors\ResolvesFor;
-    use FrameworkFactory\Contracts\Container\ContainerInstance;
+	use FrameworkFactory\Contracts\Container\ContainerInstance;
+	use FrameworkFactory\Attributes\Accessors\ResolvesFor;
+	use FrameworkFactory\Application\Accessor\Attribute;
 
-    /**
+	/**
      * The Accessor class acts a facade system. It grants
      * access to services that are bound to the container
      */
@@ -45,7 +45,7 @@ namespace FrameworkFactory\Application {
 
             // otherwise, let's use the $id value of ResolvesFor()
             /** @var ResolvesFor $attribute */
-            $attribute = CachedAttribute::get(static::class, ResolvesFor::class);
+            $attribute = Attribute::get(static::class, ResolvesFor::class);
             return $attribute->id;
         }
 
