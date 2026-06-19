@@ -5,7 +5,7 @@ namespace FrameworkFactory\Application\Getters {
     class Attribute
     {
         /** @var array $cache the cached array of attributes */
-        protected static array $cache = [];
+        private static array $cache = [];
 
         /**
          * Returns a cached instance of an attribute passed in at

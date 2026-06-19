@@ -9,9 +9,7 @@ namespace FrameworkFactory\Application\Traits {
     trait HasOptions
     {
         /** @var array|string[] $options configurable options */
-        private static array $options = [
-            // ...
-        ];
+        private static array $options = [];
 
         /**
          * Return the config option from the options array,

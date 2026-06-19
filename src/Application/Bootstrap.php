@@ -68,7 +68,7 @@ namespace FrameworkFactory\Application {
          *
          * @return void
          */
-        protected static function createCacheDirectory(string $path): void
+        private static function createCacheDirectory(string $path): void
         {
             // if it's already a directory, do nothing
             if (is_dir($path)) {
@@ -88,7 +88,7 @@ namespace FrameworkFactory\Application {
          *
          * @return string
          */
-        protected static function export(array $data): string
+        private static function export(array $data): string
         {
             return "<?php\n\nreturn " . Formatter::make()->indentWithTabs()->export($data) . ";\n";
         }

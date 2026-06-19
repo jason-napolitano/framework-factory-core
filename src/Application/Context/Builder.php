@@ -12,7 +12,7 @@ namespace FrameworkFactory\Application\Context {
     class Builder implements Contracts\Container\ContextBuilder
     {
         /** @var string $needs stores the specific dependency that will be overridden for a given context. */
-        protected string $needs;
+        private string $needs;
 
         /**
          * New builder instance

@@ -5,26 +5,26 @@ namespace Tests\Providers {
     use FrameworkFactory\Contracts\Container\ContainerInstance;
     use FrameworkFactory\Contracts\Providers\ServiceProvider;
     use Tests\Contracts\LoggerInterface;
-    use Tests\Loggers\FileLogger;
-    use Tests\Loggers\NullLogger;
-    use Tests\Services\CacheWarmer;
     use Tests\Services\ReportService;
+    use Tests\Services\CacheWarmer;
+    use Tests\Loggers\NullLogger;
+    use Tests\Loggers\FileLogger;
 
     class ReportServiceProvider extends ServiceProvider
     {
         public function register(): void
         {
             // container bindings
-            $this->container->bind(LoggerInterface::class, fn () => new NullLogger());
+            $this->bind(LoggerInterface::class, fn () => new NullLogger());
 
-            $this->container->bind(
+            $this->bind(
                 ReportService::class,
                 fn (ContainerInstance $c) => new ReportService(
                     $c->get(LoggerInterface::class)
                 )
             );
 
-            $this->container->bind(
+            $this->bind(
                 CacheWarmer::class,
                 fn (ContainerInstance $c) => new CacheWarmer(
                     $c->get(LoggerInterface::class)
@@ -32,13 +32,11 @@ namespace Tests\Providers {
             );
 
             // context-api
-            $this->container
-                ->when(ReportService::class)
+            $this->when(ReportService::class)
                 ->needs(LoggerInterface::class)
                 ->give(FileLogger::class);
 
-            $this->container
-                ->when(CacheWarmer::class)
+            $this->when(CacheWarmer::class)
                 ->needs(LoggerInterface::class)
                 ->give(NullLogger::class);
 

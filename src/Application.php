@@ -56,18 +56,6 @@ namespace FrameworkFactory {
         }
 
         /**
-         * Builds the cache path location
-         *
-         * @param string $basePath
-         *
-         * @return void
-         */
-        private static function setCachePath(string $basePath): void
-        {
-            self::$cachePath = $basePath . 'cache';
-        }
-
-        /**
          * @inheritdoc
          */
         public function fire(): void
@@ -116,6 +104,18 @@ namespace FrameworkFactory {
         public static function container(): ContainerInstance
         {
             return self::$container;
+        }
+
+        /**
+         * Builds the cache path location
+         *
+         * @param string $basePath
+         *
+         * @return void
+         */
+        private static function setCachePath(string $basePath): void
+        {
+            self::$cachePath = $basePath . 'cache';
         }
     }
 }

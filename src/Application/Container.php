@@ -14,40 +14,40 @@ namespace FrameworkFactory\Application {
     class Container implements ContainerInstance
     {
         /** @var array $bindings container bindings */
-        protected array $bindings = [];
+        private array $bindings = [];
 
         /** @var array $singletons singleton instances */
-        protected array $singletons = [];
+        private array $singletons = [];
 
         /** @var array $aliases binding aliases */
-        protected array $aliases = [];
+        private array $aliases = [];
 
         /** @var array $providers service providers */
-        protected array $providers = [];
+        private array $providers = [];
 
         /** @var bool $booted has a provider been booted? */
-        protected bool $booted = false;
+        private bool $booted = false;
 
         /** @var array $deferred deferred providers */
-        protected array $deferred = [];
+        private array $deferred = [];
 
         /** @var array $loadedProviders loaded providers */
-        protected array $loadedProviders = [];
+        private array $loadedProviders = [];
 
         /** @var array $afterResolving hooks for after a provider is loaded */
-        protected array $afterResolving  = [];
+        private array $afterResolving  = [];
 
         /** @var array $beforeResolving hooks for before a provider is loaded */
-        protected array $beforeResolving = [];
+        private array $beforeResolving = [];
 
         /** @var array $contextual lookup table of context overrides */
-        protected array $contextual = [];
+        private array $contextual = [];
 
         /** @var array $buildStack current context build stack */
-        protected array $buildStack = [];
+        private array $buildStack = [];
 
         /** @var string $cacheFile the cached bootstrap file */
-        protected string $cacheFile;
+        private string $cacheFile;
 
         /**
          * Builds the container instance
@@ -91,30 +91,6 @@ namespace FrameworkFactory\Application {
         public function addContextualBinding(string $concrete, string $abstract, callable|string $implementation): void
         {
             $this->contextual[$concrete][$abstract] = $implementation;
-        }
-
-        /**
-         * Dependency context resolution
-         *
-         * @param string $id
-         *
-         * @return mixed
-         */
-        protected function resolveWithContext(string $id): mixed
-        {
-            // If resolving as a dependency of something else
-            if (count($this->buildStack) > 1) {
-                $parent = $this->buildStack[count($this->buildStack) - 2];
-
-                if (isset($this->contextual[$parent][$id])) {
-                    $concrete = $this->contextual[$parent][$id];
-
-                    return is_callable($concrete) ? $concrete($this) : new $concrete();
-                }
-            }
-
-            // Default binding
-            return ($this->bindings[$id])($this);
         }
 
         /**
@@ -203,25 +179,6 @@ namespace FrameworkFactory\Application {
         }
 
         /**
-         * Loads a deferred service provider
-         *
-         * @param string $service
-         *
-         * @return void
-         */
-        protected function loadDeferredProvider(string $service): void
-        {
-            if (! isset($this->deferred[$service])) {
-                return;
-            }
-
-            $provider = $this->deferred[$service];
-            unset($this->deferred[$service]);
-
-            $this->registerProvider($provider);
-        }
-
-        /**
          * Run the providers' boot methods
          *
          * @return void
@@ -255,11 +212,62 @@ namespace FrameworkFactory\Application {
         }
 
         /**
+         * @inheritdoc
+         */
+        public function providers(): array
+        {
+            return [...$this->providers, ...$this->deferred];
+        }
+
+        /**
+         * Loads a deferred service provider
+         *
+         * @param string $service
+         *
+         * @return void
+         */
+        private function loadDeferredProvider(string $service): void
+        {
+            if (! isset($this->deferred[$service])) {
+                return;
+            }
+
+            $provider = $this->deferred[$service];
+            unset($this->deferred[$service]);
+
+            $this->registerProvider($provider);
+        }
+
+        /**
+         * Dependency context resolution
+         *
+         * @param string $id
+         *
+         * @return mixed
+         */
+        private function resolveWithContext(string $id): mixed
+        {
+            // If resolving as a dependency of something else
+            if (count($this->buildStack) > 1) {
+                $parent = $this->buildStack[count($this->buildStack) - 2];
+
+                if (isset($this->contextual[$parent][$id])) {
+                    $concrete = $this->contextual[$parent][$id];
+
+                    return is_callable($concrete) ? $concrete($this) : new $concrete();
+                }
+            }
+
+            // Default binding
+            return ($this->bindings[$id])($this);
+        }
+
+        /**
          * Does the cache file exist?
          *
          * @return bool
          */
-        protected function cacheFileExists(): bool
+        private function cacheFileExists(): bool
         {
             return file_exists($this->cacheFile);
         }
@@ -269,7 +277,7 @@ namespace FrameworkFactory\Application {
          *
          * @return void
          */
-        protected function loadCache(): void
+        private function loadCache(): void
         {
             $data = require $this->cacheFile;
 
@@ -282,14 +290,6 @@ namespace FrameworkFactory\Application {
             foreach ($data['providers'] as $provider) {
                 $this->registerProvider($provider);
             }
-        }
-
-        /**
-         * @inheritdoc
-         */
-        public function providers(): array
-        {
-            return [...$this->providers, ...$this->deferred];
         }
     }
 }
