@@ -2,11 +2,12 @@
 
 namespace FrameworkFactory\Application {
 
-    use FrameworkFactory\Contracts\Container\ContainerInstance;
-    use FrameworkFactory\Attributes\Accessors\ResolvesFor;
-    use FrameworkFactory\Application\Getters\Attribute;
+	use FrameworkFactory\Exceptions\Container\ContainerException;
+	use FrameworkFactory\Contracts\Container\ContainerInstance;
+	use FrameworkFactory\Attributes\Accessors\ResolvesFor;
+	use FrameworkFactory\Application\Getters\Attribute;
 
-    /**
+	/**
      * The Accessor class acts a facade system. It grants
      * access to services that are bound to the container
      */
@@ -15,12 +16,11 @@ namespace FrameworkFactory\Application {
         /** @var ContainerInstance $container the container instance */
         private static ContainerInstance $container;
 
-        /** @var string|null $key the key used to resolve the container binding */
-        protected static ?string $key = null;
+        /** @var string $key the key used to resolve the container binding */
+        protected static string $key = '';
 
         /**
-         * Set the container which will be used for
-         * binding resolution
+         * Set the container instance used for binding resolution
          *
          * @param ContainerInstance $container
          *
@@ -31,6 +31,19 @@ namespace FrameworkFactory\Application {
             static::$container = $container;
         }
 
+	    /**
+	     * Forward the static calls to the bound instance
+	     *
+	     * @param string $method
+	     * @param array  $arguments
+	     *
+	     * @return mixed
+	     */
+	    public static function __callStatic(string $method, array $arguments): mixed
+	    {
+		    return static::instance()->{$method}(...$arguments);
+	    }
+
         /**
          * Container bindings resolver
          *
@@ -38,15 +51,16 @@ namespace FrameworkFactory\Application {
          */
         private static function resolver(): string
         {
-            // if $key is assigned, let's use the value of $key
-            if (static::$key) {
-                return static::$key;
-            }
-
-            // otherwise, let's use the $id value of ResolvesFor()
-            /** @var ResolvesFor $attribute */
-            $attribute = Attribute::get(static::class, ResolvesFor::class);
-            return $attribute->id;
+			try {
+				// if $key is an empty string (the default value), let's assign it
+				// the value of the $id property from the ResolvesFor() attribute
+				if (static::$key === '') {
+					static::$key = Attribute::get(static::class, ResolvesFor::class)->id;
+				}
+				return static::$key;
+			} catch (\Throwable) {
+				throw new ContainerException('The container could not resolve the dependency.');
+			}
         }
 
         /**
@@ -57,19 +71,6 @@ namespace FrameworkFactory\Application {
         private static function instance(): mixed
         {
             return static::$container->get(static::resolver());
-        }
-
-        /**
-         * Forward the static calls to the bound instance
-         *
-         * @param string $method
-         * @param array  $arguments
-         *
-         * @return mixed
-         */
-        public static function __callStatic(string $method, array $arguments): mixed
-        {
-            return static::instance()->{$method}(...$arguments);
         }
     }
 }
