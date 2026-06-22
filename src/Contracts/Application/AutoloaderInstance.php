@@ -60,5 +60,15 @@ namespace FrameworkFactory\Contracts\Application {
          * @return string|null
          */
         public function getClassFile(string $class): ?string;
+
+        /**
+         * Manually add a class map entry
+         *
+         * @param string $class
+         * @param string $file
+         *
+         * @return $this
+         */
+        public function addClassMap(string $class, string $file): self;
     }
 }

@@ -19,9 +19,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         protected array $availableFiles = [];
 
         /**
-         * Register the autoloader with SPL
-         *
-         * @return void
+         * @inheritdoc
          */
         public function register(): void
         {
@@ -29,13 +27,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Register a PSR-4 namespace
-         *
-         * @param string $prefix
-         * @param string $baseDir
-         * @param bool   $prepend
-         *
-         * @return $this
+         * @inheritdoc
          */
         public function addNamespace(string $prefix, string $baseDir, bool $prepend = false): self
         {
@@ -58,9 +50,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Get all registered prefixes
-         *
-         * @return array
+         * @inheritdoc
          */
         public function prefixes(): array
         {
@@ -68,9 +58,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Get all classes known to the autoloader
-         *
-         * @return array
+         * @inheritdoc
          */
         public function getClasses(): array
         {
@@ -78,9 +66,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Get total class count
-         *
-         * @return int
+         * @inheritdoc
          */
         public function getClassCount(): int
         {
@@ -88,11 +74,7 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Determine whether a class exists in the map
-         *
-         * @param string $class
-         *
-         * @return bool
+         * @inheritdoc
          */
         public function hasClass(string $class): bool
         {
@@ -100,15 +82,26 @@ namespace FrameworkFactory\Application\Bootstrap {
         }
 
         /**
-         * Get file path for a class
-         *
-         * @param string $class
-         *
-         * @return string|null
+         * @inheritdoc
          */
         public function getClassFile(string $class): ?string
         {
             return $this->classmap[$class] ?? null;
+        }
+
+        /**
+         * @inheritdoc
+         */
+        public function addClassMap(string $class, string $file): self
+        {
+            $this->classmap[$class] = $file;
+
+            if (file_exists($file)) {
+                $realPath = realpath($file) ?: $file;
+                $this->availableFiles[$realPath] = $realPath;
+            }
+
+            return $this;
         }
 
         /**
@@ -191,26 +184,6 @@ namespace FrameworkFactory\Application\Bootstrap {
 
                 $this->classmap[$class] = $path;
             }
-        }
-
-        /**
-         * Manually add a class map entry
-         *
-         * @param string $class
-         * @param string $file
-         *
-         * @return $this
-         */
-        private function addClassMap(string $class, string $file): self
-        {
-            $this->classmap[$class] = $file;
-
-            if (file_exists($file)) {
-                $realPath = realpath($file) ?: $file;
-                $this->availableFiles[$realPath] = $realPath;
-            }
-
-            return $this;
         }
     }
 }
