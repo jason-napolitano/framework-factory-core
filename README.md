@@ -1,9 +1,9 @@
 # Framework Factory
 
 > Framework Factory is a PHP application starter package. The aim is to make building PHP 8 powered applications (and
-> frameworks) a breeze by giving a construct for the beginning stages of application development. The core principles are 
-> inspired by the Laravel bootstrap architecture: wherein a developer can hook into the service container before, during 
-> and after container and dependency resolutions have occurred.
+> frameworks) a breeze by giving a construct for the beginning stages of application development. The core principles
+> are inspired by the Laravel bootstrap architecture: wherein a developer can hook into the service container before, 
+> during and after container and dependency resolutions have occurred.
 >
 > Using a simple yet intuitive bootstrap process and application entrypoint interface, developers have access to the
 > logic and tools needed to get their next project going with minimal overhead. Check out the features list below for a
@@ -25,8 +25,7 @@
         - **Facade support:** - Access dependencies loaded within the container using Facades (Accessors) for easy
           resource consumption.
         - **Lazy loading:** Load dependencies only when they are needed, instead of when a container is built.
-- **Built-in autoloading:** The built-in autoloader allows for class loading to be done within the application, and not
-  the `composer.json` file.
+- **Provider Auto-discovery:** Auto-discover any service providers that live within a configurable namespace.
 - **Fully tested codebase:** The codebase is fully tested using the [Pest PHP](https://pestphp.com/) testing framework.
   You can see all tests by going [here](https://github.com/FrameworkFactoryPHP/core/tree/main/tests).
 - **Zero Dependencies:** FrameworkFactory requires zero dependencies and relies strictly on its own internal libraries.
