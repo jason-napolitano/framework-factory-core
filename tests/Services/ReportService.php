@@ -6,9 +6,9 @@ namespace Tests\Services {
 
     class ReportService
     {
-        public function __construct(
-            protected LoggerInterface $logger
-        ) {
+        public function __construct(protected LoggerInterface $logger)
+        {
+            // ...
         }
 
         public function generate(): mixed

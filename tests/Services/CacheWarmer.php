@@ -6,9 +6,9 @@ namespace Tests\Services {
 
     class CacheWarmer
     {
-        public function __construct(
-            protected LoggerInterface $logger
-        ) {
+        public function __construct(protected LoggerInterface $logger)
+        {
+            // ...
         }
 
         public function warm(): mixed

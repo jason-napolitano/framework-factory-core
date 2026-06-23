@@ -18,6 +18,8 @@ namespace FrameworkFactory\Application\Bootstrap {
         /** @var array<string, string> $availableFiles discovered PHP files */
         protected array $availableFiles = [];
 
+        protected array $namespaceIndex = [];
+
         /**
          * @inheritdoc
          */
@@ -60,9 +62,15 @@ namespace FrameworkFactory\Application\Bootstrap {
         /**
          * @inheritdoc
          */
-        public function getClasses(): array
+        public function getClasses(?string $subNamespace = null): array
         {
-            return array_keys($this->classmap);
+            if ($subNamespace === null) {
+                return array_keys($this->classmap);
+            }
+
+            $subNamespace = trim($subNamespace, '\\');
+
+            return $this->namespaceIndex[$subNamespace] ?? [];
         }
 
         /**
@@ -181,8 +189,20 @@ namespace FrameworkFactory\Application\Bootstrap {
                         |> (static fn ($x) => preg_replace('/\.php$/i', '', $x));
 
                 $class = $prefix . $relativePath;
-
                 $this->classmap[$class] = $path;
+
+                $parts = explode('\\', $class);
+
+                // build namespace tree index
+                $current = '';
+                foreach ($parts as $i => $part) {
+                    if ($i === count($parts) - 1) {
+                        break;
+                    }
+
+                    $current .= ($current ? '\\' : '') . $part;
+                    $this->namespaceIndex[$current][] = $class;
+                }
             }
         }
     }

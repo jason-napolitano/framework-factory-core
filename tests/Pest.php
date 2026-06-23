@@ -1,7 +1,6 @@
 <?php
 
 use FrameworkFactory\Application;
-use Tests\Providers;
 use Tests\TestState;
 
 /*
@@ -22,11 +21,11 @@ pest()->beforeAll(function () {
     // application instance
     TestState::$app = Application::build(basePath: __DIR__ . '/../');
 
-    // assign a default provider
+    // assign default providers
     TestState::$app->withProviders([
-        Providers\DeferredServiceProvider::class,
-        Providers\MessageServiceProvider::class,
-        Providers\ReportServiceProvider::class,
+        \Tests\Providers\DeferredServiceProvider::class,
+        \Tests\Providers\MessageServiceProvider::class,
+        \Tests\Providers\ReportServiceProvider::class,
     ]);
 
     TestState::$app->fire();

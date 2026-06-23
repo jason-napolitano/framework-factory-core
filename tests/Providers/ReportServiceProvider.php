@@ -7,8 +7,8 @@ namespace Tests\Providers {
     use Tests\Contracts\LoggerInterface;
     use Tests\Services\ReportService;
     use Tests\Services\CacheWarmer;
-    use Tests\Loggers\NullLogger;
     use Tests\Loggers\FileLogger;
+    use Tests\Loggers\NullLogger;
 
     class ReportServiceProvider extends ServiceProvider
     {

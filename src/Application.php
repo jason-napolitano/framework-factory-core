@@ -2,10 +2,10 @@
 
 namespace FrameworkFactory {
 
+    use FrameworkFactory\Application as App;
+    use FrameworkFactory\Application\Traits\HasOptions;
     use FrameworkFactory\Contracts\Application\AutoloaderInstance;
     use FrameworkFactory\Contracts\Container\ContainerInstance;
-    use FrameworkFactory\Application\Traits\HasOptions;
-    use FrameworkFactory\Application as App;
 
     /**
      * This is the application entry point used to build and
@@ -40,6 +40,9 @@ namespace FrameworkFactory {
         /** @var AutoloaderInstance $autoloader autoloader instance */
         private static AutoloaderInstance $autoloader;
 
+        /** @var string $appNamespace application namespace */
+        private static string $appNamespace;
+
         /**
          * @inheritdoc
          */
@@ -70,10 +73,31 @@ namespace FrameworkFactory {
             // run the bootstrap build process
             App\Bootstrap::build(self::$container, self::$providers, self::$cachePath);
 
+            // auto-discover service providers
+            $this->autoDiscoverProviders();
+
             // bootstrap the service providers and run their boot methods
             self::$container->bootstrap(self::$providers);
             self::$container->bootProviders();
         }
+
+        /**
+         * Auto-discover providers and add them to the providers array
+         *
+         * @return void
+         */
+        private function autoDiscoverProviders(): void
+        {
+            $providers = self::autoloader()->getClasses(self::$appNamespace . '\\Providers');
+            $filtered = array_values(array_filter($providers, static function (string $item) {
+                return str_ends_with($item, 'ServiceProvider') || str_ends_with($item, 'Provider');
+            }));
+
+            foreach ($filtered as $class) {
+                self::$providers[] = $class;
+            }
+        }
+
 
         /**
          * @inheritdoc
@@ -131,6 +155,7 @@ namespace FrameworkFactory {
          */
         private static function registerAutoloader(string $namespace, string $path): void
         {
+            self::$appNamespace = ucfirst($namespace);
             self::$autoloader = new App\Bootstrap\Autoloader();
             self::$autoloader->register();
             self::$autoloader->addNamespace($namespace, $path);

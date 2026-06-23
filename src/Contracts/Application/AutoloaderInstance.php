@@ -34,7 +34,14 @@ namespace FrameworkFactory\Contracts\Application {
          *
          * @return array
          */
-        public function getClasses(): array;
+        /**
+         * Returns classes loaded into the autoloader
+         *
+         * @param string|null $subNamespace
+         *
+         * @return array
+         */
+        public function getClasses(?string $subNamespace = null): array;
 
         /**
          * Get total class count
