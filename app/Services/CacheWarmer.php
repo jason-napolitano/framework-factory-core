@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Services {
+namespace App\Services {
 
-    use Tests\Contracts\LoggerInterface;
+    use App\Contracts\LoggerInterface;
 
     class CacheWarmer
     {

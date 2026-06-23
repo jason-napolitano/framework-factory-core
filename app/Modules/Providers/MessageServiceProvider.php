@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Providers {
+namespace App\Modules\Providers {
 
+    use App\Services\MessageService;
     use FrameworkFactory\Contracts;
-    use Tests\Services\MessageService;
 
     class MessageServiceProvider extends Contracts\Providers\ServiceProvider
     {
