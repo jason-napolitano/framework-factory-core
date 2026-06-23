@@ -4,6 +4,7 @@ namespace FrameworkFactory {
 
     use FrameworkFactory\Application as App;
     use FrameworkFactory\Application\Traits\HasOptions;
+    use FrameworkFactory\Contracts\Application\ApplicationInstance;
     use FrameworkFactory\Contracts\Application\AutoloaderInstance;
     use FrameworkFactory\Contracts\Container\ContainerInstance;
 
@@ -46,7 +47,7 @@ namespace FrameworkFactory {
         /**
          * @inheritdoc
          */
-        public static function build(string $basePath, string $appNamespace = 'App', string $appDirectory = 'app'): self
+        public static function build(string $basePath, string $appNamespace = 'App', string $appDirectory = 'app'): ApplicationInstance
         {
             // assign the base and cache paths
             self::$basePath = rtrim($basePath, '/') . DIRECTORY_SEPARATOR;
@@ -58,8 +59,8 @@ namespace FrameworkFactory {
             // registers a new autoloader instance
             self::registerAutoloader($appNamespace, self::$basePath . $appDirectory);
 
-	        // auto-discover service providers
-	        self::autoDiscoverProviders();
+            // auto-discover service providers
+            self::autoDiscoverProviders(self::autoloader());
 
             // configure the facade / accessor system
             App\Accessor::setContainer(self::$container);
@@ -74,7 +75,7 @@ namespace FrameworkFactory {
         public function fire(): void
         {
             // run the bootstrap build process
-            App\Bootstrap::build(self::$container, self::$providers, self::$cachePath);
+            App\Bootstrap::build(self::$container, self::filteredProviders(self::$providers), self::$cachePath);
 
             // bootstrap the service providers and run their boot methods
             self::$container->bootstrap(self::$providers);
@@ -84,20 +85,42 @@ namespace FrameworkFactory {
         /**
          * Auto-discover providers and add them to the providers array
          *
+         * @param AutoloaderInstance $autoloader autoloader instance
+         *
          * @return void
          */
-        private static function autoDiscoverProviders(): void
+        private static function autoDiscoverProviders(AutoloaderInstance $autoloader): void
         {
-            $providers = self::autoloader()->getClasses(self::$appNamespace . '\\Providers');
-            $filtered = array_values(array_filter($providers, static function (string $item) {
-                return str_ends_with($item, 'ServiceProvider') || str_ends_with($item, 'Provider');
-            }));
-
-            foreach ($filtered as $class) {
+            // add each autoloaded provider to the $providers array
+            foreach ($autoloader->getClasses(self::$appNamespace . '\Providers') as $class) {
                 self::$providers[] = $class;
             }
         }
 
+        /**
+         * Returns an array of filtered providers
+         *
+         * @param array $items
+         *
+         * @return array
+         */
+        private static function filteredProviders(array $items): array
+        {
+            return array_filter($items, self::isProviderClass(...)) |> array_values(...);
+        }
+
+        /**
+         * Check to see if the class provided is an approved service
+         * provider class
+         *
+         * @param string $class
+         *
+         * @return bool
+         */
+        private static function isProviderClass(string $class): bool
+        {
+            return str_ends_with($class, 'Provider') || str_ends_with($class, 'ServiceProvider');
+        }
 
         /**
          * @inheritdoc

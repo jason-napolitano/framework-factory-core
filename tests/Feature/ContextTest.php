@@ -1,13 +1,13 @@
 <?php
 
-use Tests\Services\CacheWarmer;
-use Tests\Services\ReportService;
+use FrameworkFactory\Application;
+use App\Services;
 
 describe('context api tests', function () {
 
     test('the context api properly switches services out based on their contextual requirements', function () {
-        $reportService = \FrameworkFactory\Application::get(ReportService::class);
-        $warmerService = \FrameworkFactory\Application::get(CacheWarmer::class);
+        $reportService = Application::get(Services\ReportService::class);
+        $warmerService = Application::get(Services\CacheWarmer::class);
 
         expect($reportService->generate())
             ->toBe('[FILE] Generating report...')

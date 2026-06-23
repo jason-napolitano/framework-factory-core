@@ -1,6 +1,7 @@
 <?php
 
 use FrameworkFactory\Application;
+use App\Modules\Providers;
 use Tests\TestState;
 
 /*
@@ -23,9 +24,9 @@ pest()->beforeAll(function () {
 
     // assign default providers
     TestState::$app->withProviders([
-        \Tests\Providers\DeferredServiceProvider::class,
-        \Tests\Providers\MessageServiceProvider::class,
-        \Tests\Providers\ReportServiceProvider::class,
+        Providers\DeferredServiceProvider::class,
+        Providers\MessageServiceProvider::class,
+        Providers\ReportServiceProvider::class,
     ]);
 
     TestState::$app->fire();

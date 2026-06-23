@@ -1,22 +1,23 @@
 <?php
 
-use App\Providers;
+use App\Modules\Providers as ManuallyLoadedProviders;
+use App\Providers as AutoloadedProviders;
 use FrameworkFactory\Application;
 
 describe('provider tests', function () {
-    test('providers can be successfully added to the container', function () {
+    test('manually loaded providers have been successfully added to the container', function () {
         expect(Application::providers())->toContain(
-            \Tests\Providers\DeferredServiceProvider::class,
-            \Tests\Providers\MessageServiceProvider::class,
-            \Tests\Providers\ReportServiceProvider::class,
-            Providers\AutoDeferredServiceProvider::class
+            ManuallyLoadedProviders\DeferredServiceProvider::class,
+            ManuallyLoadedProviders\MessageServiceProvider::class,
+            ManuallyLoadedProviders\ReportServiceProvider::class,
         );
     });
 
     test('auto-discovered providers have been successfully added to the container', function () {
         expect(Application::providers())->toContain(
-            Providers\AutoStandardServiceProvider::class,
-            Providers\AutoDeferredServiceProvider::class
+            AutoloadedProviders\StandardServiceProvider::class,
+            AutoloadedProviders\DeferredServiceProvider::class,
+            AutoloadedProviders\DemoProvider::class,
         );
     });
 })->group('providers');

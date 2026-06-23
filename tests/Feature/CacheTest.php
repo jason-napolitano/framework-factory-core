@@ -1,5 +1,8 @@
 <?php
 
+use App\Modules\Providers as ManuallyLoadedProviders;
+use App\Providers as AutoloadedProviders;
+
 describe('cache tests', function () {
     test('the cache directory is successfully created', function () {
         expect(file_exists(Tests\TestState::$cachePath))->toBeTrue();
@@ -14,8 +17,8 @@ describe('cache tests', function () {
         $providers = $file['providers'];
 
         expect($providers)->toContain(
-            \Tests\Providers\MessageServiceProvider::class,
-            \Tests\Providers\ReportServiceProvider::class,
+            ManuallyLoadedProviders\MessageServiceProvider::class,
+            ManuallyLoadedProviders\ReportServiceProvider::class,
         );
     });
 
@@ -26,7 +29,7 @@ describe('cache tests', function () {
         expect($deferred)
             ->toHaveKey('deferred_message')
             ->and($deferred['deferred_message'])
-            ->toContain(\Tests\Providers\DeferredServiceProvider::class);
+            ->toContain(ManuallyLoadedProviders\DeferredServiceProvider::class);
     });
 
     test('the cache file includes the auto-discovered standard service providers', function () {
@@ -34,7 +37,8 @@ describe('cache tests', function () {
         $providers = $file['providers'];
 
         expect($providers)->toContain(
-            \App\Providers\AutoStandardServiceProvider::class,
+            AutoloadedProviders\StandardServiceProvider::class,
+            AutoloadedProviders\DemoProvider::class,
         );
     });
 
@@ -45,7 +49,7 @@ describe('cache tests', function () {
         expect($deferred)
             ->toHaveKey('auto_deferred_provider')
             ->and($deferred['auto_deferred_provider'])
-            ->toContain(\App\Providers\AutoDeferredServiceProvider::class);
+            ->toContain(AutoloadedProviders\DeferredServiceProvider::class);
     });
 
     test('the cache file includes the correct aliases for deferred providers', function () {

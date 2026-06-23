@@ -19,7 +19,7 @@ namespace FrameworkFactory\Contracts\Application {
          *
          * @return self
          */
-        public static function build(string $basePath): self;
+        public static function build(string $basePath): ApplicationInstance;
 
         /**
          * Registers multiple service providers
