@@ -24,8 +24,9 @@
         - **Facade support:** - Access dependencies loaded within the container using Facades (Accessors) for easy
           resource consumption.
         - **Lazy loading:** Load dependencies only when they are needed, instead of when a container is built.
-- **Built-in autoloader:** The built-in autoloader allows developers to avoid using the `composer.json` file for their
-  main application namespace by keeping the configuration _in-house_.
+- **Built-in autoloader:** The built-in autoloader allows developers to configure the application namespace from within
+  the application itself, instead of the `composer.json` file; allowing multiple application instances to use
+  their own namespaces.
 - **Provider Auto-discovery:** Using the built-in autoloader, developers can auto-discover any service providers that
   live within a configurable namespace.
 - **Fully tested codebase:** The codebase is fully tested using the [Pest PHP](https://pestphp.com/) testing framework.
