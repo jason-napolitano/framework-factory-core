@@ -12,9 +12,9 @@
 ## Features
 
 - **Application endpoint:** The application endpoint is located at `FrameworkFactory\Application`. This class
-  assists in managing your application by providing an elegant boostrap and application configuration API.
-- **PSR-11 IoC Container:** The IoC container is the heart of Framework Factory. It is a robust container
-  that includes many features for managing dependencies within your application, as well as giving you access to them.
+  assists in managing an application by providing an elegant boostrap and application configuration API.
+- **PSR-11 IoC Container:** The IoC container is a robust container that includes many features for managing
+  dependencies within an application, as well as providing access to them.
     - **Container Features**:
         - **Container lifecycle hooks:** Lifecycle hooks allow developers to interact with the container at different
           stages of execution.
@@ -24,6 +24,8 @@
         - **Facade support:** - Access dependencies loaded within the container using Facades (Accessors) for easy
           resource consumption.
         - **Lazy loading:** Load dependencies only when they are needed, instead of when a container is built.
+- **Built-in autoloader:** The built-in autoloader allows developers to avoid using the `composer.json` file for their
+  main application namespace by keeping the configuration _in-house_.
 - **Provider Auto-discovery:** Using the built-in autoloader, developers can auto-discover any service providers that
   live within a configurable namespace.
 - **Fully tested codebase:** The codebase is fully tested using the [Pest PHP](https://pestphp.com/) testing framework.
