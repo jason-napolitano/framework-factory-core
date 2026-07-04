@@ -1,7 +1,7 @@
 <?php
 
 use FrameworkFactory\Application;
-use App\Modules\Providers;
+use Tests\App\Providers;
 use Tests\TestState;
 
 /*

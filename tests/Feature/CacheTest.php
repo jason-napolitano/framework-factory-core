@@ -1,8 +1,5 @@
 <?php
 
-use App\Modules\Providers as ManuallyLoadedProviders;
-use App\Providers as AutoloadedProviders;
-
 describe('cache tests', function () {
     test('the cache directory is successfully created', function () {
         expect(file_exists(Tests\TestState::$cachePath))->toBeTrue();
@@ -12,44 +9,24 @@ describe('cache tests', function () {
         expect(file_exists(rtrim(Tests\TestState::$cachePath, '/') . '/app.php'))->toBeTrue();
     });
 
-    test('the cache file includes the manually added standard service providers', function () {
+    test('the cache file includes the standard service providers', function () {
         $file = require rtrim(Tests\TestState::$cachePath, '/') . '/app.php';
         $providers = $file['providers'];
 
         expect($providers)->toContain(
-            ManuallyLoadedProviders\MessageServiceProvider::class,
-            ManuallyLoadedProviders\ReportServiceProvider::class,
+            \Tests\App\Providers\MessageServiceProvider::class,
+            \Tests\App\Providers\ReportServiceProvider::class,
         );
     });
 
-    test('the cache file includes the manually added deferred service providers', function () {
+    test('the cache file includes the deferred service providers', function () {
         $file = require rtrim(Tests\TestState::$cachePath, '/') . '/app.php';
         $deferred = $file['deferred'];
 
         expect($deferred)
             ->toHaveKey('deferred_message')
             ->and($deferred['deferred_message'])
-            ->toContain(ManuallyLoadedProviders\DeferredServiceProvider::class);
-    });
-
-    test('the cache file includes the auto-discovered standard service providers', function () {
-        $file = require rtrim(Tests\TestState::$cachePath, '/') . '/app.php';
-        $providers = $file['providers'];
-
-        expect($providers)->toContain(
-            AutoloadedProviders\StandardServiceProvider::class,
-            AutoloadedProviders\DemoProvider::class,
-        );
-    });
-
-    test('the cache file includes the auto-discovered deferred service providers', function () {
-        $file = require rtrim(Tests\TestState::$cachePath, '/') . '/app.php';
-        $deferred = $file['deferred'];
-
-        expect($deferred)
-            ->toHaveKey('auto_deferred_provider')
-            ->and($deferred['auto_deferred_provider'])
-            ->toContain(AutoloadedProviders\DeferredServiceProvider::class);
+            ->toContain(\Tests\App\Providers\DeferredServiceProvider::class);
     });
 
     test('the cache file includes the correct aliases for deferred providers', function () {
