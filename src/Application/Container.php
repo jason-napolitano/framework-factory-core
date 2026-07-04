@@ -72,7 +72,7 @@ namespace FrameworkFactory\Application {
          */
         public function singleton(string $id, callable $factory): void
         {
-            $this->bindings[$id] = function ($c) use ($id, $factory) {
+            $this->bindings[$id] = function (ContainerInstance $c) use ($id, $factory) {
                 return $this->instances[$id] ??= $factory($c);
             };
         }
@@ -140,7 +140,7 @@ namespace FrameworkFactory\Application {
                 }
 
                 if (! isset($this->bindings[$id])) {
-                    throw new ServiceNotFound("Service [$id] not bound.");
+                    throw new ServiceNotFound("The [$id] service has not been bound to the container.");
                 }
 
                 $object = $this->resolveWithContext($id);
