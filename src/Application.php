@@ -57,7 +57,7 @@ namespace FrameworkFactory {
             self::registerAutoloader($appNamespace, self::$basePath . $appDirectory);
 
             // auto-discover service providers
-            self::autoDiscoverProviders(self::autoloader());
+            self::autoDiscoverProviders(self::$autoloader);
 
             // configure the facade / accessor system
             App\Accessor::setContainer(self::$container);
@@ -86,7 +86,7 @@ namespace FrameworkFactory {
         {
             // if the $providers is an empty array, throw an exception
             if (empty($providers)) {
-                throw new Exceptions\Container\EmptyProvidersValue('The providers array cannot be empty');
+                throw new Exceptions\Container\EmptyProvidersValue('The providers array cannot be empty.');
             }
 
             // assign the providers
@@ -118,14 +118,6 @@ namespace FrameworkFactory {
         }
 
         /**
-         * @inheritdoc
-         */
-        public static function autoloader(): Contracts\Application\AutoloaderInstance
-        {
-            return self::$autoloader;
-        }
-
-        /**
          * Registers a new autoloader instance
          *
          * @param string $namespace
@@ -153,44 +145,46 @@ namespace FrameworkFactory {
             self::$cachePath = $basePath . 'cache';
         }
 
-	    /**
-	     * Auto-discover providers and add them to the providers array
-	     *
-	     * @param Contracts\Application\AutoloaderInstance $autoloader autoloader instance
-	     *
-	     * @return void
-	     */
-	    private static function autoDiscoverProviders(Contracts\Application\AutoloaderInstance $autoloader): void
-	    {
-		    // add each autoloaded provider to the $providers array
-		    foreach ($autoloader->getClasses(self::$appNamespace . '\Providers') as $class) {
-			    self::$providers[] = $class;
-		    }
-	    }
+        /**
+         * Auto-discover providers and add them to the providers array
+         *
+         * @param Contracts\Application\AutoloaderInstance $autoloader autoloader instance
+         *
+         * @return void
+         */
+        private static function autoDiscoverProviders(Contracts\Application\AutoloaderInstance $autoloader): void
+        {
+            // add each autoloaded provider to the $providers array
+            $providers = $autoloader->getClasses(self::$appNamespace . '\Providers');
 
-	    /**
-	     * Returns an array of filtered providers
-	     *
-	     * @param array $items
-	     *
-	     * @return array
-	     */
-	    private static function filteredProviders(array $items): array
-	    {
-		    return array_filter($items, self::isProviderClass(...)) |> array_values(...);
-	    }
+            foreach ($providers as $provider) {
+                self::$providers[] = $provider;
+            }
+        }
 
-	    /**
-	     * Check to see if the class provided is an approved service
-	     * provider class
-	     *
-	     * @param string $class
-	     *
-	     * @return bool
-	     */
-	    private static function isProviderClass(string $class): bool
-	    {
-		    return str_ends_with($class, 'Provider') || str_ends_with($class, 'ServiceProvider');
-	    }
+        /**
+         * Returns an array of filtered providers
+         *
+         * @param array $items
+         *
+         * @return array
+         */
+        private static function filteredProviders(array $items): array
+        {
+            return array_filter($items, self::isProviderClass(...)) |> array_values(...);
+        }
+
+        /**
+         * Check to see if the class provided is an approved service
+         * provider class
+         *
+         * @param string $class
+         *
+         * @return bool
+         */
+        private static function isProviderClass(string $class): bool
+        {
+            return str_ends_with($class, 'Provider') || str_ends_with($class, 'ServiceProvider');
+        }
     }
 }

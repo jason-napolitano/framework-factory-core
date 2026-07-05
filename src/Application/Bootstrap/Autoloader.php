@@ -73,6 +73,48 @@ namespace FrameworkFactory\Application\Bootstrap {
             return $this->namespaceIndex[$subNamespace] ?? [];
         }
 
+	    /**
+	     * Returns any sub-namespaces within the classmap
+	     *
+	     * @param string $namespace
+	     *
+	     * @return array
+	     */
+	    public function getSubNamespaces(string $namespace): array
+	    {
+		    $namespace = trim($namespace, '\\');
+
+		    $children = [];
+
+		    foreach (array_keys($this->classmap) as $class) {
+			    if (!str_starts_with($class, $namespace . '\\')) {
+				    continue;
+			    }
+
+			    $remaining = substr($class, strlen($namespace) + 1);
+
+			    if ($remaining === false) {
+				    continue;
+			    }
+
+			    $parts = explode('\\', $remaining);
+
+			    // If there is no namespace below the requested namespace,
+			    // then the class is directly inside it.
+			    if (count($parts) <= 1) {
+				    continue;
+			    }
+
+			    $children[$parts[0]] = true;
+		    }
+
+		    $namespaces = array_keys($children);
+
+		    sort($namespaces);
+
+		    return $namespaces;
+	    }
+
         /**
          * @inheritdoc
          */

@@ -1,10 +1,26 @@
 <?php
 
 use FrameworkFactory\Application;
+use FrameworkFactory\Application\Bootstrap\Autoloader;
 use FrameworkFactory\Contracts;
 
 describe('autoloader tests', function () {
-    test('the autoloader has been successfully registered upon the creation of the application', function () {
-        expect(Application::autoloader())->toBeInstanceOf(Contracts\Application\AutoloaderInstance::class);
+    test('the autoloader can be built and register new namespaces', function () {
+		$autoloader = new Autoloader();
+
+		$autoloader->register();
+
+		$autoloader->addNamespace('App', __DIR__ . '/../App');
+
+	    $subNamespaces = $autoloader->getSubNamespaces('App');
+	    $prefixes = $autoloader->prefixes();
+
+		expect($autoloader)
+			->toBeInstanceOf(Contracts\Application\AutoloaderInstance::class)
+			->and($prefixes)
+			->toHaveKey('App\\')
+			->and($subNamespaces)
+			->toContain('Providers', 'Contracts', 'Services', 'Loggers');
+
     });
 })->group('autoloader');
