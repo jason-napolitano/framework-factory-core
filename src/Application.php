@@ -42,18 +42,23 @@ namespace FrameworkFactory {
         private static string $appNamespace;
 
         /**
-         * @inheritdoc
+         * Application build process
+         *
+         * @param string $basePath
+         * @param string $appNamespace
+         * @param string $appDirectory
+         *
+         * @return Contracts\Application\ApplicationInstance
          */
         public static function build(string $basePath, string $appNamespace = 'App', string $appDirectory = 'app'): Contracts\Application\ApplicationInstance
         {
-            // assign the base and cache paths
-            self::$basePath = rtrim($basePath, '/') . DIRECTORY_SEPARATOR;
-            self::setCachePath(self::$basePath);
+            // application path assignment
+            self::assignPaths($basePath);
 
             // build a new container instance
             self::$container = new App\Container(self::$cachePath);
 
-            // registers a new autoloader instance
+            // register a new autoloader instance
             self::registerAutoloader($appNamespace, self::$basePath . $appDirectory);
 
             // auto-discover service providers
@@ -94,7 +99,10 @@ namespace FrameworkFactory {
         }
 
         /**
-         * @inheritdoc
+         * Returns an array of providers whose services are
+         * currently bound to the container
+         *
+         * @return array
          */
         public static function providers(): array
         {
@@ -102,7 +110,11 @@ namespace FrameworkFactory {
         }
 
         /**
-         * @inheritdoc
+         * Returns a service that has been bound to the container
+         *
+         * @param string $id
+         *
+         * @return mixed
          */
         public static function get(string $id): mixed
         {
@@ -126,14 +138,15 @@ namespace FrameworkFactory {
         }
 
         /**
-         * Builds the cache path location
+         * Assigns the base path and cache path locations
          *
          * @param string $basePath
          *
          * @return void
          */
-        private static function setCachePath(string $basePath): void
+        private static function assignPaths(string $basePath): void
         {
+            self::$basePath = rtrim($basePath, '/') . DIRECTORY_SEPARATOR;
             self::$cachePath = $basePath . 'cache';
         }
 
