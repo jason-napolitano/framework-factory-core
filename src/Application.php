@@ -163,7 +163,9 @@ namespace FrameworkFactory {
          */
         private static function filteredProviders(array $items): array
         {
-            return array_filter($items, self::isProviderClass(...)) |> array_values(...);
+            return array_filter($items, self::isProviderClass(...))
+		            |> array_unique(...)
+		            |> array_values(...);
         }
 
         /**

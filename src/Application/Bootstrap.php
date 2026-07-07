@@ -48,7 +48,7 @@ namespace FrameworkFactory\Application {
 
             // the data for the cache file
             $cache = [
-                'providers' => array_unique($eager),
+                'providers' => $eager,
                 'deferred'  => $deferred,
                 'aliases'   => $aliases,
             ];
