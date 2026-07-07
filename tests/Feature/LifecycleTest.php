@@ -9,26 +9,29 @@ describe('lifecycle hook tests', function () {
 
         $events = [];
 
+        $container->beforeResolving('service', function () use (&$events) {
+            $events[] = 'before';
+        });
+
         $container->bind('service', function () use (&$events) {
             $events[] = 'resolve';
             return new stdClass();
-        });
-
-        $container->beforeResolving('service', function () use (&$events) {
-            $events[] = 'before';
         });
 
         $container->afterResolving('service', function () use (&$events) {
             $events[] = 'after';
         });
 
-        $container->get('service');
+        $service = $container->get('service');
 
-        expect($events)->toBe([
-            'before',
-            'resolve',
-            'after',
-        ]);
+        expect($service)
+            ->toBeInstanceOf(stdClass::class)
+            ->and($events)
+            ->toBe([
+                'before',
+                'resolve',
+                'after',
+            ]);
     });
 
 })->group('lifecycle');
