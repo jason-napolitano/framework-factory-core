@@ -2,8 +2,8 @@
 
 namespace FrameworkFactory\Contracts\Providers {
 
+    use FrameworkFactory\Attributes\Providers\CreatesBinding;
     use FrameworkFactory\Application\Getters;
-    use FrameworkFactory\Attributes\Services\CreatesBinding;
     use FrameworkFactory\Contracts\Container;
 
     /**
@@ -18,13 +18,13 @@ namespace FrameworkFactory\Contracts\Providers {
          */
         public function __construct(private readonly Container\ContainerInstance $container)
         {
-			// run a check to verify whether the service provider is using the
-	        // CreatesBinding attribute
-	        if (Getters\Attribute::has(static::class, CreatesBinding::class)) {
-				// if it is, bind a new service to the container using its properties
-		        $attribute = Getters\Attribute::get(static::class, CreatesBinding::class);
-		        $this->container->bind($attribute->id, fn () => new $attribute->concrete());
-	        }
+            // run a check to verify whether the service provider is using the
+            // CreatesBinding attribute
+            if (Getters\Attribute::has(static::class, CreatesBinding::class)) {
+                // if it is, bind a new service to the container using its properties
+                $attribute = Getters\Attribute::get(static::class, CreatesBinding::class);
+                $this->container->bind($attribute->id, fn () => new $attribute->concrete());
+            }
         }
 
         /**

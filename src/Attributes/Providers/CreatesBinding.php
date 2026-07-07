@@ -1,6 +1,6 @@
 <?php
 
-namespace FrameworkFactory\Attributes\Services {
+namespace FrameworkFactory\Attributes\Providers {
 
     use Attribute;
 
