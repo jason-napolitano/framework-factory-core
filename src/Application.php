@@ -2,10 +2,10 @@
 
 namespace FrameworkFactory {
 
-	use FrameworkFactory\Application as App;
-	use FrameworkFactory\Application\Traits;
+    use FrameworkFactory\Application as App;
+    use FrameworkFactory\Application\Traits;
 
-	/**
+    /**
      * This is the application entry point used to build and
      * bootstrap an application. It sets up the container and
      * configures the core libraries.
@@ -163,9 +163,7 @@ namespace FrameworkFactory {
          */
         private static function filteredProviders(array $items): array
         {
-            return array_filter($items, self::isProviderClass(...))
-		            |> array_unique(...)
-		            |> array_values(...);
+            return array_filter($items, self::isProviderClass(...)) |> array_unique(...) |> array_values(...);
         }
 
         /**
