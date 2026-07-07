@@ -20,7 +20,7 @@ describe('autoloader tests', function () {
 			->and($prefixes)
 			->toHaveKey('App\\')
 			->and($subNamespaces)
-			->toContain('Providers', 'Contracts', 'Services', 'Loggers');
+			->toContain('Accessors', 'Contracts', 'Providers', 'Loggers', 'Services');
 
     });
 })->group('autoloader');
