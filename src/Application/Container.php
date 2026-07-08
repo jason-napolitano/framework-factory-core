@@ -181,18 +181,18 @@ namespace FrameworkFactory\Application {
                 return;
             }
 
-            // assemble the arrays
+            // assemble the provider arrays
             $this->loadedProviders[$provider] = true;
             $this->providers[] = $provider;
 
-            // run a check to verify whether the service provider calls CreatesBinding
+            // if a service provider uses the CreatesBinding attribute
             if (Getters\Attribute::has($provider, CreatesBinding::class)) {
-                // if it does, bind a new service to the container using its properties
+	            // bind a new service to the container using its attached metadata
                 $attribute = Getters\Attribute::get($provider, CreatesBinding::class);
                 $this->bind($attribute->id, fn () => new $attribute->concrete());
             }
 
-            // otherwise, run the providers register() method
+            // otherwise, create a new provider instance and run its register() method
             new $provider($this)->register();
         }
 
