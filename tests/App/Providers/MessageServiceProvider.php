@@ -9,5 +9,6 @@ namespace Tests\App\Providers {
     #[CreatesBinding('message', MessageService::class)]
     class MessageServiceProvider extends Contracts\Providers\ServiceProvider
     {
+		// ...
     }
 }

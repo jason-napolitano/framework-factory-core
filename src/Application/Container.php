@@ -2,12 +2,14 @@
 
 namespace FrameworkFactory\Application {
 
-    use FrameworkFactory\Contracts\Container\ContainerInstance;
-    use FrameworkFactory\Exceptions\Container\ServiceNotFound;
-    use FrameworkFactory\Contracts\Container\ContextBuilder;
-    use FrameworkFactory\Application\Context\Builder;
+	use FrameworkFactory\Contracts\Container\ContainerInstance;
+	use FrameworkFactory\Exceptions\Container\ServiceNotFound;
+	use FrameworkFactory\Attributes\Providers\CreatesBinding;
+	use FrameworkFactory\Contracts\Container\ContextBuilder;
+	use FrameworkFactory\Application\Context\Builder;
+	use FrameworkFactory\Application\Getters;
 
-    /**
+	/**
      * The container is built to house all dependencies that an
      * application is going to use.
      */
@@ -168,14 +170,23 @@ namespace FrameworkFactory\Application {
          */
         public function registerProvider(string $provider): void
         {
+			// forego the registration if the provider is already loaded
             if (isset($this->loadedProviders[$provider])) {
                 return;
             }
 
+			// assemble the arrays
             $this->loadedProviders[$provider] = true;
             $this->providers[] = $provider;
 
-            new $provider($this)->register();
+	        // run a check to verify whether the service provider calls CreatesBinding
+	        if (Getters\Attribute::has($provider, CreatesBinding::class)) {
+		        $attribute = Getters\Attribute::get($provider, CreatesBinding::class);
+		        $this->bind($attribute->id, fn () => new $attribute->concrete());
+	        }
+
+			// otherwise, run the providers register() method
+	        new $provider($this)->register();
         }
 
         /**
