@@ -16,7 +16,7 @@ namespace FrameworkFactory\Contracts\Providers {
          */
         public function __construct(private readonly Container\ContainerInstance $container)
         {
-			// ...
+            // ...
         }
 
         /**
