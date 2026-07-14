@@ -4,11 +4,10 @@ namespace FrameworkFactory\Application {
 
     use FrameworkFactory\Exceptions\Container\ContainerException;
     use FrameworkFactory\Contracts\Container\ContainerInstance;
-    use FrameworkFactory\Exceptions\Container\ServiceNotFound;
-    use FrameworkFactory\Contracts\Providers\ServiceProvider;
-    use FrameworkFactory\Attributes\Providers\CreatesBinding;
-    use FrameworkFactory\Contracts\Container\ContextBuilder;
-    use FrameworkFactory\Application\Container\Binding;
+	use FrameworkFactory\Contracts\Container\ContainerBinding;
+	use FrameworkFactory\Contracts\Providers\ServiceProvider;
+	use FrameworkFactory\Attributes\Providers\CreatesBinding;
+	use FrameworkFactory\Contracts\Container\ContextBuilder;
     use FrameworkFactory\Application\Context\Builder;
 
     /**
@@ -17,16 +16,16 @@ namespace FrameworkFactory\Application {
      */
     class Container implements ContainerInstance
     {
-        /** @var array $bindings container bindings */
+        /** @var array<ContainerBinding> $bindings container bindings */
         private array $bindings = [];
 
-        /** @var array $singletons singleton instances */
+        /** @var array<ContainerBinding> $singletons singleton instances */
         private array $singletons = [];
 
-        /** @var array $aliases binding aliases */
+        /** @var array<string> $aliases binding aliases */
         private array $aliases = [];
 
-        /** @var array $providers service providers */
+        /** @var array<string, string> $providers service providers */
         private array $providers = [];
 
         /** @var bool $booted has a provider been booted? */
@@ -76,7 +75,7 @@ namespace FrameworkFactory\Application {
          */
         public function singleton(string $id, callable $factory): void
         {
-            $this->bindings[$id] = $this->bindingInstance($factory, true);
+            $this->singletons[$id] = $this->bindingInstance($factory, true);
         }
 
         /**
@@ -141,12 +140,6 @@ namespace FrameworkFactory\Application {
                     $this->loadDeferredProvider($id);
                 }
 
-                if (! isset($this->bindings[$id])) {
-                    throw new ServiceNotFound(
-                        sprintf('The [%s] service has not been bound to the container.', $id)
-                    );
-                }
-
                 $binding = $this->bindings[$id];
 
                 $object = $this->resolveWithContext($id);
@@ -199,7 +192,7 @@ namespace FrameworkFactory\Application {
                 $this->bind($attribute->id, fn () => new $attribute->concrete());
             }
 
-            // otherwise, create a new provider instance and run its register() method
+            // create a new provider instance and run its register() method
             new $provider($this)->register();
         }
 
@@ -253,7 +246,7 @@ namespace FrameworkFactory\Application {
          */
         private function loadDeferredProvider(string $service): void
         {
-            if (! isset($this->deferred[$service])) {
+            if (!isset($this->deferred[$service])) {
                 return;
             }
 
@@ -297,7 +290,7 @@ namespace FrameworkFactory\Application {
          */
         private function bindingInstance(callable $factory, bool $shared = false): array
         {
-            return (array) new Binding($factory, $shared);
+            return (array) new ContainerBinding($factory, $shared);
         }
 
         /**
